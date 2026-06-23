@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>نظام المقارنة المعيارية المؤسسي</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'IBM Plex Sans Arabic',sans-serif;background:#F0F2F7;color:#1a1a2e;direction:rtl;min-height:100vh;padding:1.2rem}
+:root{
+  --pri:#1A3C5E;--pri2:#2E6DA4;--acc:#4A90D9;
+  --grn:#1A7A4A;--grn2:#C6F6D5;--grn3:#22543D;
+  --red:#C53030;--red2:#FED7D7;--red3:#742A2A;
+  --amb:#B7791F;--amb2:#FEFCBF;--amb3:#744210;
+  --blu:#1A365D;--blu2:#BEE3F8;--blu3:#2B6CB0;
+  --pur:#553C9A;--pur2:#E9D8FD;--pur3:#44337A;
+  --gray:#718096;--gray2:#EDF2F7;--gray3:#4A5568;
+  --border:#E2E8F0;--white:#fff;--radius:12px
+}
+.wrap{max-width:1000px;margin:0 auto}
+
+/* HEADER */
+.header{background:linear-gradient(135deg,#0D2244 0%,#1A3C5E 60%,#1E5799 100%);border-radius:16px;padding:1.6rem 2rem;margin-bottom:1.2rem;display:flex;justify-content:space-between;align-items:center;box-shadow:0 4px 20px rgba(13,34,68,.25)}
+.h-title{color:#fff;font-size:20px;font-weight:700}
+.h-sub{color:#85B7EB;font-size:11.5px;margin-top:3px}
+.h-right{display:flex;gap:8px}
+.badge{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:999px;padding:5px 14px;color:#B5D4F4;font-size:11px}
+.badge-grn{background:rgba(26,122,74,.3);border-color:rgba(26,122,74,.4);color:#9AE6B4}
+
+/* STEPPER */
+.stepper{background:#fff;border-radius:14px;padding:1.2rem 1.8rem;margin-bottom:1.2rem;display:flex;align-items:flex-start;position:relative;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.stepper::before{content:'';position:absolute;top:30px;right:calc(10% + 10px);left:calc(10% + 10px);height:2px;background:var(--border);z-index:0}
+.step{flex:1;display:flex;flex-direction:column;align-items:center;position:relative;z-index:1}
+.step-n{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;background:#fff;border:2px solid var(--border);color:#A0AEC0;transition:all .3s}
+.step.active .step-n{background:var(--pri);border-color:var(--pri);color:#fff;box-shadow:0 0 0 5px rgba(26,60,94,.12)}
+.step.done .step-n{background:var(--grn);border-color:var(--grn);color:#fff}
+.step-l{font-size:10.5px;color:#A0AEC0;margin-top:5px;text-align:center;max-width:85px;line-height:1.4}
+.step.active .step-l{color:var(--pri);font-weight:600}
+.step.done .step-l{color:var(--grn)}
+
+/* CARD */
+.card{background:#fff;border-radius:14px;padding:1.6rem;margin-bottom:1.2rem;box-shadow:0 2px 10px rgba(0,0,0,.06);border:1.5px solid var(--border)}
+.card-title{font-size:12.5px;font-weight:700;color:var(--pri);text-transform:uppercase;letter-spacing:.07em;margin-bottom:1rem;display:flex;align-items:center;gap:7px;padding-bottom:8px;border-bottom:2px solid #EBF5FB}
+
+/* FORM */
+.label{font-size:11px;font-weight:600;color:var(--gray);text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px}
+.req{color:#E53E3E}
+textarea,input[type=text],select{width:100%;padding:10px 13px;font-size:13.5px;font-family:'IBM Plex Sans Arabic',sans-serif;background:#fff;border:1.5px solid var(--border);border-radius:10px;color:#1a1a2e;direction:rtl;transition:border .2s;outline:none}
+textarea{resize:vertical}
+textarea:focus,input[type=text]:focus,select:focus{border-color:var(--pri);box-shadow:0 0 0 3px rgba(26,60,94,.1)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.g{margin-bottom:1rem}
+
+/* UPLOAD */
+.upload{border:2px dashed #CBD5E0;border-radius:12px;padding:1.4rem;text-align:center;cursor:pointer;background:#F7FAFC;transition:all .2s}
+.upload:hover{border-color:var(--pri);background:#EBF5FB}
+.upload p{font-size:12.5px;color:var(--gray);margin-top:6px}
+.upload span{font-size:11px;color:#A0AEC0}
+input[type=file]{display:none}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.chip{background:#EBF5FB;border:1px solid #BEE3F8;border-radius:999px;padding:3px 11px;font-size:12px;color:var(--pri)}
+
+/* BUTTONS */
+.btn-p{background:var(--pri);color:#fff;border:none;border-radius:10px;padding:12px 24px;font-size:14px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:7px;font-family:'IBM Plex Sans Arabic',sans-serif;transition:background .2s}
+.btn-p:hover{background:#0D2244}
+.btn-s{background:#fff;color:#2D3748;border:1.5px solid var(--border);border-radius:10px;padding:10px 18px;font-size:13px;cursor:pointer;font-family:'IBM Plex Sans Arabic',sans-serif;display:inline-flex;align-items:center;gap:6px}
+.btn-s:hover{background:#F7FAFC}
+.btn-row{display:flex;justify-content:space-between;align-items:center;margin-top:1.4rem}
+.btn-row-end{display:flex;justify-content:flex-end;margin-top:1.4rem}
+
+/* LOADING */
+.loading{text-align:center;padding:3rem 0}
+.dots{display:flex;justify-content:center;gap:8px;margin-bottom:1rem}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--pri);animation:bop 1.1s infinite}
+.dot:nth-child(2){animation-delay:.18s}.dot:nth-child(3){animation-delay:.36s}
+@keyframes bop{0%,100%{transform:scale(1);opacity:.4}50%{transform:scale(1.5);opacity:1}}
+.ld-title{font-size:15px;font-weight:600;color:#2D3748;margin-bottom:6px}
+.ld-sub{font-size:13px;color:var(--gray)}
+
+/* PHASE */
+.phase{display:none}.phase.active{display:block}
+
+/* PRACTICE CARDS */
+.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:1rem}
+.pcard{border:1.5px solid var(--border);border-radius:12px;padding:1.1rem;cursor:pointer;background:#fff;position:relative;transition:all .2s}
+.pcard:hover{border-color:var(--pri);box-shadow:0 2px 12px rgba(26,60,94,.1)}
+.pcard.selected{border:2px solid var(--pri);background:#F0F8FF}
+.pc-rank{position:absolute;top:9px;left:9px;width:24px;height:24px;border-radius:50%;background:#0D2244;color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.pc-match{position:absolute;top:9px;right:9px;font-size:10.5px;font-weight:600;padding:3px 10px;border-radius:999px}
+.match-a{background:var(--grn2);color:var(--grn3)}.match-b{background:var(--blu2);color:var(--blu)}.match-c{background:var(--amb2);color:var(--amb3)}
+.pc-title{font-size:13px;font-weight:700;color:#1a1a2e;margin:28px 0 2px}
+.pc-org{font-size:11.5px;color:var(--gray);margin-bottom:8px}
+.pc-desc{font-size:11.5px;color:var(--gray3);line-height:1.65;margin-bottom:10px}
+.tags{display:flex;flex-wrap:wrap;gap:4px}
+.tag{font-size:10.5px;padding:2px 8px;border-radius:999px}
+.tag-s{background:var(--grn2);color:var(--grn3)}.tag-d{background:var(--red2);color:var(--red3)}
+.pc-check{position:absolute;bottom:9px;left:9px;width:20px;height:20px;border-radius:50%;background:var(--pri);color:#fff;display:none;align-items:center;justify-content:center;font-size:11px}
+.pcard.selected .pc-check{display:flex}
+
+/* ══════════════════════════════════
+   REPORT — يطابق تنسيق ملف PDF
+══════════════════════════════════ */
+.report-wrap{font-size:13px;color:#1a1a2e;line-height:1.8}
+
+/* غلاف التقرير */
+.rep-cover{background:linear-gradient(135deg,#0D2244,#1A3C5E);border-radius:14px 14px 0 0;padding:2rem;display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0}
+.rep-cover-left .rep-title{color:#fff;font-size:18px;font-weight:700;margin-bottom:4px}
+.rep-cover-left .rep-between{color:#85B7EB;font-size:12px;margin-bottom:6px}
+.rep-cover-left .rep-parties{color:#fff;font-size:13.5px;font-weight:600}
+.rep-cover-right{text-align:left;font-size:11px;color:#85B7EB;line-height:2}
+.rep-cover-right strong{color:#B5D4F4}
+
+/* شريط موضوع */
+.rep-subject{background:#1A3C5E;padding:.8rem 2rem;border-bottom:2px solid #2E86AB}
+.rep-subject p{color:#EBF5FB;font-size:13px}
+.rep-subject strong{color:#fff}
+
+/* جسم التقرير */
+.rep-body{background:#fff;border:1.5px solid var(--border);border-top:none;padding:0;border-radius:0 0 14px 14px}
+
+/* أقسام التقرير */
+.rep-section{padding:1.4rem 2rem;border-bottom:1px solid var(--gray2)}
+.rep-section:last-child{border-bottom:none}
+.rep-h{font-size:12px;font-weight:700;color:var(--pri);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;display:flex;align-items:center;gap:7px;padding-bottom:6px;border-bottom:2px solid #EBF5FB}
+.rep-text{font-size:13px;color:var(--gray3);line-height:1.85}
+
+/* ملخص تنفيذي */
+.exec-box{background:#EBF5FB;border-right:4px solid var(--pri);border-radius:0 10px 10px 0;padding:14px 18px;margin-bottom:12px}
+.exec-box p{font-size:13px;color:#0D2244;line-height:1.85;font-weight:500}
+.exec-why{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.exec-why-item{background:#fff;border-radius:8px;padding:10px 14px;border:1px solid #BEE3F8}
+.exec-why-item .ewi-label{font-size:10.5px;font-weight:700;color:var(--pri);margin-bottom:4px;text-transform:uppercase;letter-spacing:.07em}
+.exec-why-item .ewi-val{font-size:12.5px;color:var(--gray3)}
+
+/* قرارات فورية */
+.decisions-list{counter-reset:dec;display:flex;flex-direction:column;gap:6px;margin-top:8px}
+.dec-item{display:flex;gap:10px;align-items:flex-start;padding:9px 12px;background:#F7FAFC;border-radius:9px;border:1px solid var(--border)}
+.dec-num{width:24px;height:24px;border-radius:50%;background:var(--pri);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.dec-text{font-size:12.5px;color:var(--gray3);line-height:1.7}
+
+/* glossary */
+.glossary-table{width:100%;border-collapse:collapse;font-size:12px}
+.glossary-table th{background:var(--pri);color:#fff;padding:8px 12px;text-align:right;font-weight:600}
+.glossary-table td{padding:7px 12px;border-bottom:1px solid var(--border);vertical-align:top}
+.glossary-table tr:nth-child(even) td{background:#F7FAFC}
+.gls-symbol{font-weight:700;color:var(--pri);font-family:monospace;white-space:nowrap}
+.gls-ar{font-weight:600;color:#1a1a2e}
+
+/* محاور المقارنة */
+.axes-table{width:100%;border-collapse:collapse;font-size:12px}
+.axes-table th{background:var(--pri);color:#fff;padding:9px 12px;text-align:right;font-weight:600;font-size:11.5px}
+.axes-table td{padding:9px 12px;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.7}
+.axes-table tr:hover td{background:#F7FAFC}
+.ax-note{display:inline-block;font-size:10.5px;font-weight:600;padding:2px 9px;border-radius:999px;margin-top:4px;white-space:nowrap}
+.ax-note-pri{background:var(--blu2);color:var(--blu)}
+.ax-note-sec{background:var(--grn2);color:var(--grn3)}
+.ax-note-eq{background:var(--amb2);color:var(--amb3)}
+
+/* مؤشر الأداء */
+.kpi-big{background:linear-gradient(135deg,#EBF5FB,#F0FFF4);border:1.5px solid #BEE3F8;border-radius:12px;padding:1.4rem;margin-bottom:1rem}
+.kpi-big-title{font-size:12px;font-weight:700;color:var(--pri);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px}
+.kpi-formula{background:#fff;border-radius:8px;padding:10px 14px;font-size:12.5px;color:#1a1a2e;border:1px solid var(--border);margin-bottom:12px;direction:ltr;text-align:center;font-weight:600;line-height:1.8}
+.kpi-compare{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.kpi-city{background:#fff;border-radius:10px;padding:1rem;border:1.5px solid var(--border)}
+.kpi-city-name{font-size:11px;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px}
+.kpi-pct{font-size:36px;font-weight:700;margin-bottom:4px}
+.kpi-pct-pri{color:var(--pri)}.kpi-pct-sec{color:var(--amb3)}
+.kpi-activities{font-size:11px;color:var(--gray);margin-bottom:8px}
+.kpi-bar-track{height:8px;background:var(--gray2);border-radius:999px;overflow:hidden;margin-bottom:4px}
+.kpi-bar-fill{height:100%;border-radius:999px;transition:width 1s ease}
+.kpi-bar-pri{background:var(--pri)}.kpi-bar-sec{background:var(--amb)}
+.activity-list{font-size:11px;color:var(--gray3)}
+.activity-item{display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid #F0F0F0}
+.act-badge{font-size:10px;font-weight:600;padding:1px 7px;border-radius:999px}
+.act-full{background:var(--grn2);color:var(--grn3)}
+.act-partial{background:var(--blu2);color:var(--blu3)}
+.act-minimal{background:var(--amb2);color:var(--amb3)}
+.act-na{background:var(--gray2);color:var(--gray)}
+
+/* جدول نقاط القوة */
+.strengths-table{width:100%;border-collapse:collapse;font-size:12px}
+.strengths-table th{background:var(--pri);color:#fff;padding:9px 12px;text-align:right;font-weight:600}
+.strengths-table td{padding:9px 12px;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.7}
+.strengths-table tr:nth-child(even) td{background:#F7FAFC}
+.return-badge{display:inline-block;font-size:10.5px;background:var(--grn2);color:var(--grn3);padding:2px 8px;border-radius:999px}
+
+/* جدول التوصيات */
+.rec-table{width:100%;border-collapse:collapse;font-size:12px}
+.rec-table th{background:var(--pri);color:#fff;padding:9px 12px;text-align:right;font-weight:600}
+.rec-table td{padding:9px 12px;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.7}
+.rec-table tr:nth-child(even) td{background:#F7FAFC}
+.pri-high{background:#FED7D7;color:#742A2A;padding:2px 9px;border-radius:999px;font-size:10.5px;font-weight:600;white-space:nowrap}
+.pri-med{background:var(--amb2);color:var(--amb3);padding:2px 9px;border-radius:999px;font-size:10.5px;font-weight:600;white-space:nowrap}
+.timeline{font-size:10.5px;color:var(--gray);white-space:nowrap}
+
+/* مصادر */
+.sources-list{display:flex;flex-direction:column;gap:10px}
+.source-item{background:#F7FAFC;border:1px solid var(--border);border-radius:9px;padding:10px 14px}
+.src-section{font-size:10.5px;font-weight:700;color:var(--pri);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px}
+.src-entry{display:flex;flex-direction:column;gap:3px;margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.src-entry:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.src-org{font-size:12px;font-weight:600;color:#1a1a2e}
+.src-quote{font-size:11.5px;color:var(--gray3);font-style:italic;direction:ltr;text-align:left;background:#fff;padding:4px 8px;border-radius:5px;border-right:3px solid var(--acc)}
+.src-url{font-size:11px;color:var(--acc)}
+.src-url a{color:var(--acc);text-decoration:none;direction:ltr;display:inline-block}
+.src-url a:hover{text-decoration:underline}
+
+/* ملخص سريع */
+.summary-card{background:linear-gradient(135deg,#F0FFF4,#EBF8FF);border:1.5px solid #9AE6B4;border-radius:14px;overflow:hidden;margin-bottom:1.2rem}
+.sum-header{background:var(--grn);padding:.9rem 1.6rem}
+.sum-header p{color:#fff;font-size:13px;font-weight:600}
+.sum-body{padding:1.2rem 1.6rem}
+.sum-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1rem}
+.sum-kpi{background:rgba(255,255,255,.7);border-radius:10px;padding:10px;text-align:center;border:1px solid rgba(154,230,180,.3)}
+.sum-kpi-val{font-size:24px;font-weight:700;color:var(--pri)}
+.sum-kpi-lbl{font-size:10.5px;color:var(--gray);margin-top:2px}
+.sum-text{font-size:13px;color:#2D3748;line-height:1.85}
+
+/* تذييل */
+.rep-footer{background:#F7FAFC;padding:.9rem 2rem;border-top:1px solid var(--border);display:flex;justify-content:space-between;border-radius:0 0 14px 14px}
+.rep-footer p{font-size:11px;color:#A0AEC0}
+
+/* KPI SELECTION */
+.kpi-suggestion{border:1.5px solid var(--border);border-radius:11px;padding:11px 14px;cursor:pointer;background:#fff;transition:all .2s;position:relative}
+.kpi-suggestion:hover{border-color:var(--pri);background:#F0F8FF}
+.kpi-suggestion.selected{border:2px solid var(--pri);background:#F0F8FF}
+.kpi-suggestion.selected::after{content:"✓";position:absolute;top:8px;left:8px;width:20px;height:20px;border-radius:50%;background:var(--pri);color:#fff;font-size:11px;display:flex;align-items:center;justify-content:center;font-weight:700}
+.kpi-sug-name{font-size:13px;font-weight:600;color:#1a1a2e;margin-bottom:3px;padding-left:0}
+.kpi-suggestion.selected .kpi-sug-name{padding-left:26px}
+.kpi-sug-target{font-size:11px;color:var(--grn3);font-weight:600;background:var(--grn2);padding:2px 8px;border-radius:999px;display:inline-block;margin-bottom:5px}
+.kpi-sug-why{font-size:11.5px;color:var(--gray3);line-height:1.55}
+.kpi-table{width:100%;border-collapse:collapse;font-size:12.5px;margin:8px 0}
+.kpi-table th{background:var(--pri);color:#fff;padding:9px 14px;text-align:right;font-weight:600;font-size:11.5px}
+.kpi-table td{padding:8px 14px;border-bottom:1px solid var(--border);color:var(--gray3)}
+.kpi-table tr:hover td{background:#F7FAFC}
+
+/* مؤشرات الأداء — مرحلة الاختيار */
+.kpi-suggest-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1rem}
+.kpi-suggest-item{border:1.5px solid var(--border);border-radius:10px;padding:12px 14px;cursor:pointer;background:#fff;transition:all .2s;display:flex;align-items:flex-start;gap:10px}
+.kpi-suggest-item:hover{border-color:var(--pri);background:#F0F8FF}
+.kpi-suggest-item.selected{border:2px solid var(--pri);background:#EBF5FB}
+.kpi-suggest-item.selected .ksi-check{background:var(--pri);border-color:var(--pri);color:#fff}
+.ksi-check{width:20px;height:20px;border-radius:5px;border:2px solid #CBD5E0;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;margin-top:1px;transition:all .2s}
+.ksi-body{flex:1}
+.ksi-title{font-size:13px;font-weight:600;color:#1a1a2e;margin-bottom:3px}
+.ksi-desc{font-size:11.5px;color:var(--gray);line-height:1.6}
+.ksi-unit{font-size:10.5px;background:var(--gray2);color:var(--gray3);padding:2px 8px;border-radius:999px;display:inline-block;margin-top:4px}
+.kpi-manual-list{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.kpi-manual-row{display:flex;gap:8px;align-items:center}
+.kpi-manual-row input{flex:1;padding:8px 12px;font-size:12.5px;border:1.5px solid var(--border);border-radius:8px;font-family:'IBM Plex Sans Arabic',sans-serif;direction:rtl;outline:none}
+.kpi-manual-row input:focus{border-color:var(--pri)}
+.kpi-manual-row .del-btn{background:var(--red2);color:var(--red3);border:none;border-radius:7px;padding:7px 12px;cursor:pointer;font-size:12px;white-space:nowrap}
+.kpi-selected-count{font-size:12px;font-weight:600;color:var(--pri);margin-bottom:8px}
+
+/* طباعة */
+/* طباعة */
+@media print{
+  body{background:#fff;padding:0}
+  .header,.stepper,.btn-row,.btn-row-end,.summary-card,.card:not(.report-card){display:none!important}
+  .card.report-card{box-shadow:none;border:none;padding:0}
+  .rep-body{border:1px solid #ccc}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- HEADER -->
+<div class="header">
+  <div>
+    <div class="h-title">⚡ نظام المقارنة المعيارية المؤسسي</div>
+    <div class="h-sub">Intelligent Benchmarking System — الإصدار 4.0</div>
+  </div>
+  <div class="h-right">
+    <div class="badge-grn badge">مدعوم بالذكاء الاصطناعي</div>
+    <div class="badge" id="refBadge">—</div>
+  </div>
+</div>
+
+<!-- STEPPER -->
+<div class="stepper">
+  <div class="step active" id="s1"><div class="step-n">١</div><div class="step-l">الفكرة والمستندات</div></div>
+  <div class="step" id="s2"><div class="step-n">٢</div><div class="step-l">أفضل الممارسات العالمية</div></div>
+  <div class="step" id="s3"><div class="step-n">٣</div><div class="step-l">مؤشرات الأداء</div></div>
+  <div class="step" id="s4"><div class="step-n">٤</div><div class="step-l">التقرير المؤسسي الكامل</div></div>
+</div>
+
+<!-- ═══ PHASE 1 ═══ -->
+<div class="phase active" id="ph1">
+  <div class="card">
+    <div class="card-title">📋 موضوع المقارنة المعيارية</div>
+    <div class="g">
+      <div class="label">اكتب موضوع المقارنة بالتفصيل <span class="req">*</span></div>
+      <textarea id="ideaText" rows="5" placeholder="مثال: رقابة ذكية على أنشطة نقل الركاب (مركبات الأجرة، الحجز الإلكتروني، النقل الفاخر، الحافلات) من خلال منصات متكاملة وأنظمة ذكاء اصطناعي للرصد والتحرير الآلي..."></textarea>
+    </div>
+    <div class="grid2 g">
+      <div>
+        <div class="label">القطاع <span class="req">*</span></div>
+        <select id="sectorSel">
+          <option value="">-- اختر --</option>
+          <option value="حكومي وخدمات عامة">حكومي وخدمات عامة</option>
+          <option value="نقل ومواصلات">نقل ومواصلات</option>
+          <option value="تكنولوجيا مالية وبنوك">تكنولوجيا مالية وبنوك</option>
+          <option value="رعاية صحية">رعاية صحية</option>
+          <option value="أتمتة وذكاء اصطناعي">أتمتة وذكاء اصطناعي</option>
+          <option value="إدارة شكاوى ورقابة">إدارة شكاوى ورقابة</option>
+          <option value="تعليم وتدريب">تعليم وتدريب</option>
+          <option value="عقارات وبنية تحتية">عقارات وبنية تحتية</option>
+          <option value="طاقة وبيئة">طاقة وبيئة</option>
+          <option value="آخر">آخر</option>
+        </select>
+      </div>
+      <div>
+        <div class="label">اسم الجهة <span class="req">*</span></div>
+        <input type="text" id="orgInput" placeholder="مثال: هيئة الطرق والمواصلات — RTA دبي">
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📎 مستندات داعمة (اختياري)</div>
+    <div class="upload" onclick="document.getElementById('fileInput').click()">
+      <svg width="28" height="28" fill="none" stroke="#A0AEC0" viewBox="0 0 24 24" style="display:block;margin:0 auto 6px"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+      <p>اسحب ملفاتك هنا أو اضغط للرفع</p>
+      <span>PDF · Word · Excel · صور</span>
+    </div>
+    <input type="file" id="fileInput" multiple accept=".pdf,.docx,.xlsx,.png,.jpg" onchange="handleFiles(event)">
+    <div class="chips" id="fileChips"></div>
+  </div>
+
+  <div class="btn-row-end">
+    <button class="btn-p" onclick="startPhase2()" style="font-size:15px;padding:13px 30px">
+      <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path stroke-linecap="round" d="M21 21l-4.35-4.35"/></svg>
+      بحث عن أفضل الممارسات العالمية
+    </button>
+  </div>
+</div>
+
+<!-- ═══ PHASE 2 — أفضل الممارسات ═══ -->
+<div class="phase" id="ph2">
+  <div id="ph2-loading" class="card loading">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="ld-title">جارٍ البحث عن أفضل الممارسات العالمية...</div>
+    <div class="ld-sub" id="ph2-status">تحليل الموضوع وتصنيفه...</div>
+  </div>
+  <div id="ph2-results" style="display:none">
+    <div class="card">
+      <div class="card-title">🌍 أفضل 4 ممارسات عالمية — اختر الممارسة المرجعية</div>
+      <div class="pgrid" id="practicesGrid"></div>
+      <div class="btn-row">
+        <button class="btn-s" onclick="goTo(1)">← رجوع</button>
+        <button class="btn-p" id="reportBtn" disabled onclick="startPhase3()">
+          📊 التالي — اختيار مؤشرات الأداء
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ PHASE 3 — مؤشرات الأداء ═══ -->
+<div class="phase" id="ph3">
+  <div id="ph3-loading" class="card loading">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="ld-title">جارٍ اقتراح مؤشرات الأداء المناسبة...</div>
+    <div class="ld-sub" id="ph3-status">تحليل الموضوع وتحديد المؤشرات...</div>
+  </div>
+  <div id="ph3-results" style="display:none">
+    <div class="card">
+      <div class="card-title">📊 اختر مؤشرات الأداء للمقارنة</div>
+      <div style="font-size:12.5px;color:var(--gray);margin-bottom:1rem">اختر واحداً أو أكثر من المؤشرات المقترحة بناءً على موضوعك — ثم أضف مؤشراتك الخاصة إن أردت</div>
+
+      <!-- المؤشرات المقترحة -->
+      <div id="kpiSuggestions" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.2rem"></div>
+
+      <!-- إضافة يدوية -->
+      <div style="background:var(--gray2);border-radius:12px;padding:1rem 1.2rem;margin-bottom:1rem">
+        <div style="font-size:11px;font-weight:700;color:var(--pri);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.7rem">➕ إضافة مؤشر يدوياً</div>
+        <div style="display:flex;gap:8px">
+          <input type="text" id="kpiManualDesc" placeholder="وصف المؤشر..." style="flex:2">
+          <input type="text" id="kpiManualTarget" placeholder="المستهدف (مثال: 85%)" style="flex:1">
+          <button class="btn-s" onclick="addManualKpi()" style="white-space:nowrap;flex-shrink:0">إضافة ✓</button>
+        </div>
+      </div>
+
+      <!-- المؤشرات المختارة -->
+      <div id="selectedKpisWrap" style="display:none">
+        <div style="font-size:11px;font-weight:700;color:var(--grn3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.6rem">✅ المؤشرات المختارة</div>
+        <table class="kpi-table" id="selectedKpisTable">
+          <thead>
+            <tr>
+              <th style="width:55%">الوصف</th>
+              <th style="width:20%;text-align:center">المستهدف</th>
+              <th style="width:15%;text-align:center">المحقق</th>
+              <th style="width:10%;text-align:center">حذف</th>
+            </tr>
+          </thead>
+          <tbody id="selectedKpisBody"></tbody>
+        </table>
+      </div>
+
+      <div id="kpiSelectionNote" style="font-size:12px;color:var(--gray);text-align:center;margin-top:.8rem;padding:.6rem;background:var(--gray2);border-radius:8px">
+        💡 لو ما اخترت أي مؤشر — النظام سيحدد الأنسب تلقائياً
+      </div>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;margin-top:1rem">
+      <button class="btn-s" onclick="goTo(2)">← رجوع</button>
+      <button class="btn-p" onclick="startPhase4()">
+        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path stroke-linecap="round" d="M21 21l-4.35-4.35"/></svg>
+        بحث عن أفضل الممارسات العالمية
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ PHASE 4 ═══ -->
+<div class="phase" id="ph4">
+  <div id="ph4-loading" class="card loading">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="ld-title">جارٍ إعداد التقرير المؤسسي الكامل...</div>
+    <div class="ld-sub" id="ph4-status">تحليل الفجوات وبناء المحاور...</div>
+  </div>
+  <div id="ph4-results" style="display:none">
+    <!-- التقرير الكامل -->
+    <div class="card report-card" id="reportCard"></div>
+    <!-- الملخص السريع -->
+    <div class="summary-card" id="summaryCard"></div>
+    <div class="btn-row">
+      <button class="btn-s" onclick="goTo(3)">← رجوع</button>
+      <div style="display:flex;gap:8px">
+        <button class="btn-s" onclick="window.print()">🖨️ طباعة / PDF</button>
+        <button class="btn-p" onclick="startOver()">🔄 تحليل جديد</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /wrap -->
+
+<script>
+const API_URL = 'https://api.anthropic.com/v1/messages';
+const API_KEY = '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';
+let S = { ph:1, idea:'', sector:'', org:'', practice:null, kpis:[], refNum:'' };
+
+S.refNum = 'BM-' + new Date().getFullYear() + '-' + String(Math.floor(Math.random()*9000)+1000);
+document.getElementById('refBadge').textContent = S.refNum;
+
+async function callClaude(payload, ms) {
+  ms = ms || 90000;
+  const ctrl = new AbortController();
+  const t = setTimeout(function(){ ctrl.abort(); }, ms);
+  try {
+    const r = await fetch(API_URL, {
+      method:'POST', signal:ctrl.signal,
+      headers:{'Content-Type':'application/json','x-api-key':API_KEY,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body: JSON.stringify(payload)
+    });
+    clearTimeout(t);
+    if(!r.ok){ const e=await r.json().catch(()=>({})); throw new Error('API '+r.status+': '+(e?.error?.message||r.statusText)); }
+    const d = await r.json();
+    return d.content.filter(b=>b.type==='text').map(b=>b.text).join('').replace(/```json|```/g,'').trim();
+  } catch(err) { clearTimeout(t); if(err.name==='AbortError') throw new Error('انتهت مهلة الاتصال — أعد المحاولة'); throw err; }
+}
+
+function errBox(phase, msg) {
+  var el = document.getElementById('ph'+phase+'-loading');
+  if(el) el.innerHTML = '<div style="background:#FFF5F5;border:1.5px solid #FC8181;border-radius:10px;padding:20px;text-align:center"><div style="font-size:22px;margin-bottom:8px">\u26a0\ufe0f</div><div style="font-weight:700;color:#742A2A;margin-bottom:6px">\u062a\u0639\u0630\u0651\u0631 \u0627\u0644\u0627\u062a\u0635\u0627\u0644</div><div style="font-size:12px;color:#9B2C2C;direction:ltr;font-family:monospace;background:#fff;padding:6px;border-radius:5px;margin-bottom:10px">'+msg+'</div><button class="btn-s" onclick="goTo(1)">\u2190 \u0631\u062c\u0648\u0639</button></div>';
+}
+
+function goTo(n) {
+  document.getElementById('ph'+S.ph).classList.remove('active');
+  document.getElementById('ph'+n).classList.add('active');
+  for(var i=1;i<=4;i++){
+    var e=document.getElementById('s'+i);
+    if(!e) continue;
+    e.classList.remove('active','done');
+    if(i<n) e.classList.add('done'); else if(i===n) e.classList.add('active');
+  }
+  S.ph=n; window.scrollTo(0,0);
+}
+
+function handleFiles(e) {
+  document.getElementById('fileChips').innerHTML = Array.from(e.target.files).slice(0,5).map(function(f){ return '<div class="chip">\ud83d\udcce '+f.name+'</div>'; }).join('');
+}
+
+function startPhase2() {
+  var idea=document.getElementById('ideaText').value.trim();
+  var sector=document.getElementById('sectorSel').value;
+  var org=document.getElementById('orgInput').value.trim();
+  if(!idea){alert('\u0627\u0643\u062a\u0628 \u0645\u0648\u0636\u0648\u0639 \u0627\u0644\u0645\u0642\u0627\u0631\u0646\u0629');return;}
+  if(!sector){alert('\u0627\u062e\u062a\u0631 \u0627\u0644\u0642\u0637\u0627\u0639');return;}
+  if(!org){alert('\u0627\u0643\u062a\u0628 \u0627\u0633\u0645 \u0627\u0644\u062c\u0647\u0629');return;}
+  S.idea=idea; S.sector=sector; S.org=org;
+  goTo(2); runSearch();
+}
+
+async function runSearch() {
+  var steps=['\u062a\u062d\u0644\u064a\u0644 \u0627\u0644\u0645\u0648\u0636\u0648\u0639...','\u0627\u0644\u0628\u062d\u062b \u0641\u064a \u0627\u0644\u0645\u0635\u0627\u062f\u0631 \u0627\u0644\u062f\u0648\u0644\u064a\u0629...','\u062a\u0642\u064a\u064a\u0645 \u0646\u0633\u0628 \u0627\u0644\u062a\u0637\u0627\u0628\u0642...','\u0627\u0633\u062a\u062e\u0631\u0627\u062c \u0627\u0644\u062a\u0634\u0627\u0628\u0647\u0627\u062a...'];
+  var si=0;
+  var iv=setInterval(function(){ if(si<steps.length) document.getElementById('ph2-status').textContent=steps[si++]; },900);
+  try {
+    var txt = await callClaude({
+      model:'claude-sonnet-4-20250514', max_tokens:3000,
+      system:'\u0623\u0646\u062a \u0645\u062d\u0644\u0644 \u0627\u0633\u062a\u0631\u0627\u062a\u064a\u062c\u064a \u0644\u0644\u0645\u0642\u0627\u0631\u0646\u0629 \u0627\u0644\u0645\u0639\u064a\u0627\u0631\u064a\u0629. \u0623\u0639\u062f JSON \u0641\u0642\u0637:\n{"practices":[{"rank":1,"title":"\u0627\u0644\u0627\u0633\u0645 \u0627\u0644\u0643\u0627\u0645\u0644","org":"\u0627\u0644\u0645\u0646\u0638\u0645\u0629","country":"\u0627\u0644\u062f\u0648\u0644\u0629","year":"\u0627\u0644\u0633\u0646\u0629","match":95,"matchLabel":"\u062a\u0637\u0627\u0628\u0642 \u0643\u0627\u0645\u0644","desc":"\u0648\u0635\u0641 2-3 \u062c\u0645\u0644","similarities":["\u062a\u0634\u0627\u0628\u0647 1"],"differences":["\u0641\u0631\u0642 1"],"sources":[{"label":"\u0627\u0633\u0645 \u0627\u0644\u0645\u0635\u062f\u0631","url":"https://..."}]}]}\n- match: 60-100 | matchLabel: \u062a\u0637\u0627\u0628\u0642 \u0643\u0627\u0645\u0644\u226595\u060c \u062a\u0637\u0627\u0628\u0642 \u0639\u0627\u0644\u064d 80-94\u060c \u062a\u0634\u0627\u0628\u0647 \u0643\u0628\u064a\u0631 60-79\n- \u0645\u0635\u062f\u0631\u064a\u0646 \u062d\u0642\u064a\u0642\u064a\u064a\u0646 \u0644\u0643\u0644 \u0645\u0645\u0627\u0631\u0633\u0629 | \u0623\u0639\u062f JSON \u0641\u0642\u0637',
+      messages:[{role:'user',content:'\u0627\u0644\u0645\u0648\u0636\u0648\u0639: '+S.idea+'\n\u0627\u0644\u0642\u0637\u0627\u0639: '+S.sector+' | \u0627\u0644\u062c\u0647\u0629: '+S.org+'\n\u0627\u0628\u062d\u062b \u0639\u0646 \u0623\u0641\u0636\u0644 4 \u0645\u0645\u0627\u0631\u0633\u0627\u062a \u0639\u0627\u0644\u0645\u064a\u0629 \u0645\u0634\u0627\u0628\u0647\u0629.'}]
+    });
+    clearInterval(iv);
+    var m=txt.match(/\{[\s\S]*\}/);
+    if(!m) throw new Error('JSON error');
+    window._PP = JSON.parse(m[0]).practices;
+    renderPractices(window._PP);
+  } catch(e){ clearInterval(iv); errBox(2,e.message); }
+}
+
+function renderPractices(pp) {
+  document.getElementById('ph2-loading').style.display='none';
+  document.getElementById('ph2-results').style.display='block';
+  document.getElementById('practicesGrid').innerHTML = pp.map(function(p){
+    var mc=p.match>=95?'match-a':p.match>=80?'match-b':'match-c';
+    var sims=(p.similarities||[]).map(function(s){return '<div class="tag tag-s">\u2713 '+s+'</div>';}).join('');
+    var diffs=(p.differences||[]).map(function(d){return '<div class="tag tag-d">\u2260 '+d+'</div>';}).join('');
+    var srcs=(p.sources||[]).map(function(s){return s.url?'<a href="'+s.url+'" target="_blank" onclick="event.stopPropagation()" style="font-size:11px;color:#2E86AB;text-decoration:none;background:#E8F4FD;padding:2px 7px;border-radius:5px;margin:2px;display:inline-block">\ud83d\udd17 '+(s.label||'\u0627\u0644\u0645\u0635\u062f\u0631')+'</a>':'';}).join('');
+    return '<div class="pcard" id="pc'+p.rank+'" onclick="selectP('+p.rank+')">'
+      +'<div class="pc-rank">'+p.rank+'</div>'
+      +'<div class="pc-match '+mc+'">'+p.match+'% \u2014 '+p.matchLabel+'</div>'
+      +'<div class="pc-title">'+p.title+'</div>'
+      +'<div class="pc-org">\ud83c\udfdb '+p.org+' \u00b7 '+(p.country||'')+' '+(p.year?'<span style="font-size:10px;color:#A0AEC0">\ud83d\udcc5 '+p.year+'</span>':'')+'</div>'
+      +'<div class="pc-desc">'+p.desc+'</div>'
+      +'<div class="tags">'+sims+diffs+'</div>'
+      +(srcs?'<div style="margin-top:7px;padding-top:7px;border-top:1px solid #E5E7EB"><span style="font-size:11px;font-weight:600;color:#374151">\ud83d\udcda </span>'+srcs+'</div>':'')
+      +'<div class="pc-check">\u2713</div>'
+      +'</div>';
+  }).join('');
+}
+
+function selectP(rank) {
+  document.querySelectorAll('.pcard').forEach(function(c){c.classList.remove('selected');});
+  document.getElementById('pc'+rank).classList.add('selected');
+  S.practice = window._PP.find(function(p){return p.rank===rank;});
+  document.getElementById('reportBtn').disabled=false;
+}
+
+function startPhase3() {
+  if(!S.practice) return;
+  goTo(3);
+  runKpiSuggest();
+}
+
+async function runKpiSuggest() {
+  document.getElementById('ph3-loading').style.display='block';
+  document.getElementById('ph3-results').style.display='none';
+  var pn=document.getElementById('kpiPracticeName'); if(pn) pn.textContent=S.practice.title+' / '+S.practice.org;
+  try {
+    var txt = await callClaude({
+      model:'claude-sonnet-4-20250514', max_tokens:2000,
+      system:'أنت خبير قياس أداء مؤسسي دولي. مهمتك تحليل الجهة المرجعية المختارة واستخراج مؤشرات أدائها الحقيقية المعتمدة.\nأعد JSON فقط:\n{"kpis":[{"id":1,"title":"اسم المؤشر الرسمي","desc":"وصف المؤشر وطريقة قياسه","unit":"الوحدة","category":"كفاءة|جودة|سرعة|امتثال|رضا"}]}\n- 8 إلى 10 مؤشرات حقيقية تستخدمها هذه الجهة تحديداً بناءً على تقاريرها المنشورة\n- مؤشرات مختلفة تماماً عن غيرها من الجهات\n- أعد JSON فقط',
+      messages:[{role:'user',content:'الجهة المرجعية: '+S.practice.title+' — '+S.practice.org+' ('+( S.practice.country||'')+')\nموضوع المقارنة: '+S.idea+'\nالقطاع: '+S.sector+'\nاستخرج مؤشرات الأداء الحقيقية التي تعتمدها هذه الجهة تحديداً في قياس أدائها وتقاريرها المنشورة.'}]
+    });
+    var m=txt.match(/\{[\s\S]*\}/);
+    if(!m) throw new Error('JSON error');
+    renderKpiSuggest(JSON.parse(m[0]).kpis||[]);
+  } catch(e) {
+    renderKpiSuggest([
+      {id:1,title:'\u0648\u0642\u062a \u0627\u0644\u0645\u0639\u0627\u0644\u062c\u0629',desc:'\u0645\u062a\u0648\u0633\u0637 \u0627\u0644\u0648\u0642\u062a \u0644\u0625\u062a\u0645\u0627\u0645 \u0627\u0644\u0639\u0645\u0644\u064a\u0629',unit:'\u062f\u0642\u064a\u0642\u0629',category:'\u0633\u0631\u0639\u0629'},
+      {id:2,title:'\u0646\u0633\u0628\u0629 \u0627\u0644\u0627\u0643\u062a\u0645\u0627\u0644 \u0645\u0646 \u0623\u0648\u0644 \u0645\u0631\u0629',desc:'\u0646\u0633\u0628\u0629 \u0627\u0644\u062d\u0627\u0644\u0627\u062a \u0627\u0644\u0645\u0646\u062c\u0632\u0629 \u0628\u062f\u0648\u0646 \u0625\u0639\u0627\u062f\u0629',unit:'%',category:'\u062c\u0648\u062f\u0629'},
+      {id:3,title:'\u0631\u0636\u0627 \u0627\u0644\u0645\u0633\u062a\u062e\u062f\u0645\u064a\u0646',desc:'\u062a\u0642\u064a\u064a\u0645 \u0627\u0644\u0645\u0633\u062a\u062e\u062f\u0645\u064a\u0646',unit:'%',category:'\u0631\u0636\u0627'},
+      {id:4,title:'\u0646\u0633\u0628\u0629 \u0627\u0644\u0623\u062a\u0645\u062a\u0629',desc:'\u0646\u0633\u0628\u0629 \u0627\u0644\u0639\u0645\u0644\u064a\u0627\u062a \u0627\u0644\u0645\u0646\u062c\u0632\u0629 \u062a\u0644\u0642\u0627\u0626\u064a\u0627\u064b',unit:'%',category:'\u0643\u0641\u0627\u0621\u0629'},
+      {id:5,title:'\u0645\u0639\u062f\u0644 \u0627\u0644\u0623\u062e\u0637\u0627\u0621',desc:'\u0646\u0633\u0628\u0629 \u0627\u0644\u062d\u0627\u0644\u0627\u062a \u0627\u0644\u062a\u064a \u062a\u062d\u062a\u0648\u064a \u0639\u0644\u0649 \u0623\u062e\u0637\u0627\u0621',unit:'%',category:'\u062c\u0648\u062f\u0629'},
+      {id:6,title:'\u062a\u063a\u0637\u064a\u0629 \u0627\u0644\u0628\u064a\u0627\u0646\u0627\u062a',desc:'\u0646\u0633\u0628\u0629 \u0627\u0644\u0628\u064a\u0627\u0646\u0627\u062a \u0627\u0644\u0645\u062a\u0627\u062d\u0629 \u0648\u0627\u0644\u0645\u0643\u062a\u0645\u0644\u0629',unit:'%',category:'\u0627\u0645\u062a\u062b\u0627\u0644'},
+    ]);
+  }
+}
+
+function renderKpiSuggest(kpis) {
+  window._KPIS = kpis;
+  document.getElementById('ph3-loading').style.display='none';
+  document.getElementById('ph3-results').style.display='block';
+  var catColor = {'\u0643\u0641\u0627\u0621\u0629':'background:#EBF5FB;color:#2B6CB0','\u062c\u0648\u062f\u0629':'background:#C6F6D5;color:#22543D','\u0633\u0631\u0639\u0629':'background:#FEFCBF;color:#744210','\u0627\u0645\u062a\u062b\u0627\u0644':'background:#E9D8FD;color:#44337A','\u0631\u0636\u0627':'background:#FED7D7;color:#742A2A'};
+  document.getElementById('kpiSuggestions').innerHTML = kpis.map(function(k){
+    return '<div class="kpi-suggest-item" id="ksi'+k.id+'" onclick="toggleKpi('+k.id+')">'
+      +'<div class="ksi-check" id="ksicheck'+k.id+'"></div>'
+      +'<div class="ksi-body">'
+      +'<div class="ksi-title">'+k.title+'</div>'
+      +'<div class="ksi-desc">'+k.desc+'</div>'
+      +'<span class="ksi-unit">'+k.unit+'</span> '
+      +'<span class="ksi-unit" style="'+(catColor[k.category]||'background:#EDF2F7;color:#4A5568')+'">'+k.category+'</span>'
+      +'</div></div>';
+  }).join('');
+  updateKpiCount();
+}
+
+function toggleKpi(id) {
+  var el=document.getElementById('ksi'+id), chk=document.getElementById('ksicheck'+id);
+  el.classList.toggle('selected');
+  chk.textContent = el.classList.contains('selected') ? '\u2713' : '';
+  updateKpiCount();
+}
+
+function updateKpiCount() {
+  var n=document.querySelectorAll('.kpi-suggest-item.selected').length;
+  var el=document.getElementById('kpiSelectedCount');
+  if(n===0) el.textContent='\u0644\u0645 \u064a\u062a\u0645 \u0627\u062e\u062a\u064a\u0627\u0631 \u0623\u064a \u0645\u0624\u0634\u0631 \u2014 \u0633\u064a\u062e\u062a\u0627\u0631 \u0627\u0644\u0646\u0638\u0627\u0645 \u0627\u0644\u0645\u0646\u0627\u0633\u0628 \u062a\u0644\u0642\u0627\u0626\u064a\u0627\u064b';
+  else el.textContent='\u062a\u0645 \u0627\u062e\u062a\u064a\u0627\u0631 '+n+' \u0645\u0624\u0634\u0631'+(n>1?'\u0627\u062a':'');
+}
+
+function addManualKpi() {
+  var row=document.createElement('div'); row.className='kpi-manual-row';
+  row.innerHTML='<input type="text" placeholder="\u0623\u062f\u062e\u0644 \u0645\u0624\u0634\u0631 \u0623\u062f\u0627\u0621 \u062e\u0627\u0635 \u0628\u0643..."><button class="del-btn" onclick="delManualKpi(this)">\ud83d\uddd1</button>';
+  document.getElementById('kpiManualList').appendChild(row);
+}
+
+function delManualKpi(btn) {
+  var rows=document.querySelectorAll('.kpi-manual-row');
+  if(rows.length>1) btn.closest('.kpi-manual-row').remove();
+  else btn.closest('.kpi-manual-row').querySelector('input').value='';
+}
+
+function getSelectedKpis() {
+  var sel=[];
+  document.querySelectorAll('.kpi-suggest-item.selected').forEach(function(el){
+    var id=parseInt(el.id.replace('ksi',''));
+    var k=(window._KPIS||[]).find(function(x){return x.id===id;});
+    if(k) sel.push({title:k.title,unit:k.unit});
+  });
+  document.querySelectorAll('.kpi-manual-row input').forEach(function(inp){
+    if(inp.value.trim()) sel.push({title:inp.value.trim(),unit:'\u2014'});
+  });
+  return sel;
+}
+
+function startPhase4() {
+  S.kpis = getSelectedKpis();
+  goTo(4);
+  runReport();
+}
+
+async function runReport() {
+  var stats=['\u062a\u062d\u0644\u064a\u0644 \u0627\u0644\u0641\u062c\u0648\u0627\u062a...','\u0628\u0646\u0627\u0621 \u0645\u062d\u0627\u0648\u0631 \u0627\u0644\u0645\u0642\u0627\u0631\u0646\u0629...','\u062d\u0633\u0627\u0628 \u0645\u0624\u0634\u0631 \u0627\u0644\u0623\u062f\u0627\u0621...','\u0635\u064a\u0627\u063a\u0629 \u0627\u0644\u062a\u0648\u0635\u064a\u0627\u062a...','\u0627\u0633\u062a\u062e\u0631\u0627\u062c \u0627\u0644\u0645\u0635\u0627\u062f\u0631...'];
+  var si=0;
+  var iv=setInterval(function(){ if(si<stats.length) document.getElementById('ph4-status').textContent=stats[si++]; },1200);
+  var today=new Date().toLocaleDateString('ar-AE',{year:'numeric',month:'long',day:'numeric'});
+  var kpiList = S.kpis.length ? S.kpis.map(function(k){return '- '+k.title+(k.unit&&k.unit!=='\u2014'?' ('+k.unit+')':'');}).join('\n') : '\u0627\u062e\u062a\u0631 \u0627\u0644\u0623\u0646\u0633\u0628 \u062a\u0644\u0642\u0627\u0626\u064a\u0627\u064b';
+  try {
+    var txt = await callClaude({
+      model:'claude-sonnet-4-20250514', max_tokens:5000,
+      system:'\u0623\u0646\u062a \u0643\u0627\u062a\u0628 \u062a\u0642\u0627\u0631\u064a\u0631 \u0645\u0642\u0627\u0631\u0646\u0629 \u0645\u0639\u064a\u0627\u0631\u064a\u0629 \u0645\u0624\u0633\u0633\u064a\u0629. \u0623\u0639\u062f JSON \u0641\u0642\u0637:\n{"reportTitle":"\u0639\u0646\u0648\u0627\u0646","execSummary":{"whyNow":"\u0644\u0645\u0627\u0630\u0627 \u0627\u0644\u0622\u0646","whatFound":"\u0645\u0627\u0630\u0627 \u0648\u062c\u062f\u0646\u0627","whatToDo":"\u0645\u0627\u0630\u0627 \u0646\u0641\u0639\u0644","topDecisions":["\u0642\u0631\u0627\u0631 1","\u0642\u0631\u0627\u0631 2","\u0642\u0631\u0627\u0631 3","\u0642\u0631\u0627\u0631 4","\u0642\u0631\u0627\u0631 5"]},"strategicLink":"\u0631\u0628\u0637 \u0628\u0623\u0647\u062f\u0627\u0641 2030","glossary":[{"symbol":"\u0631\u0645\u0632","arabic":"\u0645\u0639\u0646\u0649","desc":"\u0634\u0631\u062d"}],"objectives":["\u0647\u062f\u0641 1","\u0647\u062f\u0641 2","\u0647\u062f\u0641 3"],"outputs":["\u0645\u062e\u0631\u062c 1","\u0645\u062e\u0631\u062c 2","\u0645\u062e\u0631\u062c 3","\u0645\u062e\u0631\u062c 4"],"scope":"\u0646\u0637\u0627\u0642 \u0627\u0644\u0645\u0642\u0627\u0631\u0646\u0629","methodology":"\u0628\u062d\u062b \u0645\u0643\u062a\u0628\u064a","axes":[{"axis":"\u0627\u0633\u0645 \u0627\u0644\u0645\u062d\u0648\u0631","ref":"\u0648\u0636\u0639 \u0627\u0644\u0645\u0631\u062c\u0639","local":"\u0648\u0636\u0639 \u0627\u0644\u062c\u0647\u0629","maturity":"\u0645\u0644\u0627\u062d\u0638\u0629"}],"kpis":[{"kpiTitle":"\u0627\u0633\u0645 \u0627\u0644\u0645\u0624\u0634\u0631","kpiDefinition":"\u062a\u0639\u0631\u064a\u0641 \u0627\u0644\u0645\u0624\u0634\u0631","kpiFormula":"\u0635\u064a\u063a\u0629 \u0627\u0644\u062d\u0633\u0627\u0628","kpiTarget":"\u0627\u0644\u0645\u0633\u062a\u0647\u062f\u0641","kpiLocalPct":70,"kpiRefPct":85,"kpiLocalActivities":[{"name":"\u0646\u0634\u0627\u0637","level":"Partial"}],"kpiRefActivities":[{"name":"\u0646\u0634\u0627\u0637","level":"Full"}]}],"strengths":[{"point":"\u0646\u0642\u0637\u0629 \u0642\u0648\u0629","application":"\u062a\u0637\u0628\u064a\u0642","return":"\u0639\u0627\u0626\u062f"}],"recommendations":[{"area":"\u0645\u062c\u0627\u0644","action":"\u0625\u062c\u0631\u0627\u0621","owner":"\u0645\u0627\u0644\u0643","priority":"\u0639\u0627\u0644\u064a\u0629","timeline":"6-9 \u0623\u0634\u0647\u0631"}],"conclusion":"\u062e\u0644\u0627\u0635\u0629","sources":[{"section":"\u0623. \u0639\u0646\u0648\u0627\u0646","entries":[{"org":"\u0645\u0635\u062f\u0631","quote":"quote","url":"https://..."}]}],"kpi1_label":"\u0645\u0624\u0634\u0631","kpi1_val":"\u0642\u064a\u0645\u0629","kpi2_label":"\u0645\u0624\u0634\u0631 2","kpi2_val":"\u0642\u064a\u0645\u0629","kpi3_label":"\u0646\u0633\u0628\u0629 \u0627\u0644\u062a\u0637\u0627\u0628\u0642","kpi3_val":"X%"}\n- glossary: 6-8 \u0627\u062e\u062a\u0635\u0627\u0631\u0627\u062a\n- axes: 5 \u0645\u062d\u0627\u0648\u0631\n- strengths: 4 \u0646\u0642\u0627\u0637 \u0642\u0648\u0629\n- recommendations: 4-5 \u062a\u0648\u0635\u064a\u0627\u062a \u0628\u0623\u0641\u0642 \u0632\u0645\u0646\u064a\n- \u0623\u0646\u0634\u0626 \u0643\u062a\u0644\u0629 kpis \u0628\u0639\u062f\u062f \u0645\u0624\u0634\u0631\u0627\u062a \u064a\u0633\u0627\u0648\u064a \u0639\u062f\u062f \u0645\u0624\u0634\u0631\u0627\u062a \u0627\u0644\u0645\u0633\u062a\u062e\u062f\u0645 \u0627\u0644\u0645\u062e\u062a\u0627\u0631\u0629 \u062a\u062d\u062f\u064a\u062f\u0627\u064b - \u0644\u0643\u0644 \u0645\u0624\u0634\u0631 \u0628\u064a\u0627\u0646\u0627\u062a \u062d\u0642\u064a\u0642\u064a\u0629 \u0644\u0644\u062c\u0647\u062a\u064a\u0646\n- \u0627\u0633\u062a\u062e\u062f\u0645 2030 \u0648\u0644\u064a\u0633 2071\n- \u0623\u0639\u062f JSON \u0641\u0642\u0637',
+      messages:[{role:'user',content:'\u0627\u0644\u062c\u0647\u0629: '+S.org+' | \u0627\u0644\u0642\u0637\u0627\u0639: '+S.sector+'\n\u0627\u0644\u0645\u0648\u0636\u0648\u0639: '+S.idea+'\n\u0645\u0624\u0634\u0631\u0627\u062a \u0627\u0644\u0623\u062f\u0627\u0621 \u0627\u0644\u0645\u062e\u062a\u0627\u0631\u0629 ('+S.kpis.length+' \u0645\u0624\u0634\u0631\u0627\u062a):\n'+kpiList+'\n\u0627\u0644\u0645\u0645\u0627\u0631\u0633\u0629 \u0627\u0644\u0645\u0631\u062c\u0639\u064a\u0629: '+S.practice.title+' / '+S.practice.org+' / '+(S.practice.country||'', 120000)+' / '+(S.practice.year||'')+'\n\u0646\u0633\u0628\u0629 \u0627\u0644\u062a\u0637\u0627\u0628\u0642: '+S.practice.match+'%\n\u0645\u0624\u0634\u0631\u0627\u062a \u0627\u0644\u0623\u062f\u0627\u0621 \u0627\u0644\u0645\u062e\u062a\u0627\u0631\u0629:\n'+kpiList+'\n\u0627\u0644\u062a\u0627\u0631\u064a\u062e: '+today+' | \u0631\u0642\u0645 \u0627\u0644\u062a\u0642\u0631\u064a\u0631: '+S.refNum+'\n\u0627\u0643\u062a\u0628 \u0627\u0644\u062a\u0642\u0631\u064a\u0631 \u0627\u0644\u0645\u0624\u0633\u0633\u064a \u0627\u0644\u0643\u0627\u0645\u0644.'}]
+    });
+    clearInterval(iv);
+    var m=txt.match(/\{[\s\S]*\}/);
+    if(!m) throw new Error('\u0644\u0645 \u064a\u062a\u0645 \u0627\u0633\u062a\u062e\u0631\u0627\u062c JSON');
+    renderReport(JSON.parse(m[0]), today);
+  } catch(e){ clearInterval(iv); errBox(4,e.message); }
+}
+
+function renderReport(d, today) {
+  document.getElementById('ph4-loading').style.display='none';
+  document.getElementById('ph4-results').style.display='block';
+
+  // ══ جسم التقرير الكامل ══
+  const axRows = (d.axes||[]).map((a,i)=>{
+    const note = i===0?'ax-note-pri':i===1?'ax-note-eq':'ax-note-sec';
+    return `<tr><td style="font-weight:600;color:var(--pri)">${a.axis}</td><td>${a.ref}</td><td>${a.local}</td><td><span class="ax-note ${note}">${a.maturity}</span></td></tr>`;
+  }).join('');
+
+  const actBadge = l => l==='Full'?'act-full':l==='Partial'?'act-partial':l==='Minimal'?'act-minimal':'act-na';
+  // localActs/refActs computed per-kpi in section 7
+
+  const strRows = (d.strengths||[]).map(s=>`<tr><td style="font-weight:600">${s.point}</td><td>${s.application}</td><td><span class="return-badge">${s.return}</span></td></tr>`).join('');
+
+  const recRows = (d.recommendations||[]).map(r=>`<tr>
+    <td style="font-weight:600;color:var(--pri)">${r.area}</td>
+    <td>${r.action}</td>
+    <td style="font-size:11px;color:var(--gray)">${r.owner}</td>
+    <td><span class="${r.priority==='عالية'?'pri-high':'pri-med'}">${r.priority}</span></td>
+    <td><span class="timeline">⏱ ${r.timeline}</span></td>
+  </tr>`).join('');
+
+  const srcHTML = (d.sources||[]).map(sec=>`
+    <div class="source-item">
+      <div class="src-section">${sec.section}</div>
+      ${(sec.entries||[]).map(e=>`
+        <div class="src-entry">
+          <div class="src-org">${e.org}</div>
+          ${e.quote?`<div class="src-quote">"${e.quote}"</div>`:''}
+          ${e.url?`<div class="src-url"><a href="${e.url}" target="_blank">🔗 ${e.url}</a></div>`:''}
+        </div>
+      `).join('')}
+    </div>
+  `).join('');
+
+  const glosRows = (d.glossary||[]).map((g,i)=>`<tr>
+    <td class="gls-symbol">${g.symbol}</td>
+    <td class="gls-ar">${g.arabic}</td>
+    <td style="font-size:11.5px;color:var(--gray3)">${g.desc}</td>
+  </tr>`).join('');
+
+  const decItems = (d.execSummary?.topDecisions||[]).map((dec,i)=>`
+    <div class="dec-item"><div class="dec-num">${i+1}</div><div class="dec-text">${dec}</div></div>
+  `).join('');
+
+  const objItems = (d.objectives||[]).map(o=>`<li style="margin-bottom:5px">${o}</li>`).join('');
+  const outItems = (d.outputs||[]).map(o=>`<li style="margin-bottom:5px">• ${o}</li>`).join('');
+
+  document.getElementById('reportCard').innerHTML = `
+  <div class="report-wrap">
+
+    <!-- غلاف -->
+    <div class="rep-cover">
+      <div class="rep-cover-left">
+        <div class="rep-title">التقرير النهائي للمقارنة المعيارية</div>
+        <div class="rep-between">مقارنة معيارية بين</div>
+        <div class="rep-parties">${S.org}</div>
+        <div style="color:#85B7EB;font-size:12px;margin:4px 0">و</div>
+        <div class="rep-parties">${S.practice.org} — ${S.practice.country||''}</div>
+      </div>
+      <div class="rep-cover-right">
+        <div><strong>رقم التقرير:</strong> ${S.refNum}</div>
+        <div><strong>التاريخ:</strong> ${today}</div>
+        <div><strong>القطاع:</strong> ${S.sector}</div>
+        <div><strong>نسبة التطابق:</strong> ${S.practice.match}%</div>
+      </div>
+    </div>
+
+    <!-- موضوع -->
+    <div class="rep-subject">
+      <p>الموضوع: <strong>${d.reportTitle||S.idea.substring(0,80)}</strong></p>
+    </div>
+
+    <div class="rep-body">
+
+      <!-- 1. الملخص التنفيذي -->
+      <div class="rep-section">
+        <div class="rep-h">📋 ١. الملخص التنفيذي</div>
+        <div class="exec-box">
+          ${d.execSummary?.whyNow?`<p><strong>لماذا الآن؟</strong> ${d.execSummary.whyNow}</p>`:'' }
+          ${d.execSummary?.whatFound?`<p style="margin-top:6px"><strong>ماذا وجدنا؟</strong> ${d.execSummary.whatFound}</p>`:''}
+          ${d.execSummary?.whatToDo?`<p style="margin-top:6px"><strong>ماذا نفعل؟</strong> ${d.execSummary.whatToDo}</p>`:''}
+        </div>
+        ${decItems?`<div style="font-size:11px;font-weight:700;color:var(--pri);text-transform:uppercase;letter-spacing:.07em;margin-bottom:7px">أفضل القرارات الفورية</div><div class="decisions-list">${decItems}</div>`:''}
+      </div>
+
+      <!-- 2. الارتباط الاستراتيجي -->
+      <div class="rep-section">
+        <div class="rep-h">🎯 ٢. المقدمة والارتباط الاستراتيجي</div>
+        <div class="rep-text">${d.strategicLink||''}</div>
+      </div>
+
+      <!-- 3. قائمة الاختصارات -->
+      ${glosRows?`<div class="rep-section">
+        <div class="rep-h">📖 ٣. قائمة الاختصارات والرموز</div>
+        <table class="glossary-table">
+          <thead><tr><th style="width:15%">الرمز</th><th style="width:25%">المعنى بالعربية</th><th>شرح مختصر</th></tr></thead>
+          <tbody>${glosRows}</tbody>
+        </table>
+      </div>`:''}
+
+      <!-- 4. الأهداف والمخرجات -->
+      <div class="rep-section">
+        <div class="rep-h">✅ ٤. الأهداف والمخرجات</div>
+        <div class="grid2" style="gap:16px">
+          <div>
+            <div style="font-size:11px;font-weight:700;color:var(--pri);margin-bottom:7px;text-transform:uppercase;letter-spacing:.07em">الأهداف</div>
+            <ol style="padding-right:18px;font-size:12.5px;color:var(--gray3);line-height:1.8">${objItems}</ol>
+          </div>
+          <div>
+            <div style="font-size:11px;font-weight:700;color:var(--pri);margin-bottom:7px;text-transform:uppercase;letter-spacing:.07em">المخرجات</div>
+            <ul style="list-style:none;font-size:12.5px;color:var(--gray3);line-height:1.8">${outItems}</ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5. نطاق ومنهجية -->
+      <div class="rep-section">
+        <div class="rep-h">🔍 ٥. نطاق ومنهجية المقارنة</div>
+        <div class="rep-text">${d.scope||''}</div>
+        ${d.methodology?`<div style="margin-top:8px;background:var(--gray2);border-radius:8px;padding:9px 13px;font-size:12.5px;color:var(--gray3)">المنهجية: ${d.methodology}</div>`:''}
+      </div>
+
+      <!-- 6. المقارنة التفصيلية -->
+      ${axRows?`<div class="rep-section">
+        <div class="rep-h">📊 ٦. المقارنة التفصيلية حسب المحاور</div>
+        <table class="axes-table">
+          <thead><tr><th style="width:18%">المحور</th><th style="width:30%">${S.practice.org}</th><th style="width:30%">${S.org}</th><th style="width:22%">ملاحظة نضج</th></tr></thead>
+          <tbody>${axRows}</tbody>
+        </table>
+      </div>`:''}
+
+      <!-- 7. مؤشرات الأداء المقارنة -->
+      <div class="rep-section">
+        <div class="rep-h">📈 ٧. مؤشرات الأداء المقارنة</div>
+        ${(d.kpis||[{kpiTitle:d.kpiTitle||'المؤشر الرئيسي',kpiDefinition:d.kpiDefinition,kpiFormula:d.kpiFormula,kpiTarget:d.kpiTarget,kpiLocalPct:d.kpiLocalPct||70,kpiRefPct:d.kpiRefPct||85,kpiLocalActivities:d.kpiLocalActivities||[],kpiRefActivities:d.kpiRefActivities||[]}]).map(function(kpi,ki){
+          var lacts=(kpi.kpiLocalActivities||[]).map(function(a){return '<div class="activity-item"><span>'+a.name+'</span><span class="act-badge '+actBadge(a.level)+'">'+a.level+'</span></div>';}).join('');
+          var racts=(kpi.kpiRefActivities||[]).map(function(a){return '<div class="activity-item"><span>'+a.name+'</span><span class="act-badge '+actBadge(a.level)+'">'+a.level+'</span></div>';}).join('');
+          var lp=kpi.kpiLocalPct||70, rp=kpi.kpiRefPct||85;
+          return '<div style="margin-bottom:1.4rem;border:1.5px solid var(--border);border-radius:12px;overflow:hidden">'
+            +'<div style="background:var(--pri);padding:.7rem 1.2rem">'
+            +'<div style="color:#fff;font-size:13px;font-weight:600">'+(ki+1)+'. '+kpi.kpiTitle+'</div>'
+            +'</div>'
+            +'<div style="padding:1rem 1.2rem">'
+            +(kpi.kpiDefinition?'<div style="font-size:12.5px;color:var(--gray3);margin-bottom:8px">'+kpi.kpiDefinition+'</div>':'')
+            +(kpi.kpiFormula?'<div class="kpi-formula" style="margin-bottom:8px">'+kpi.kpiFormula+'</div>':'')
+            +(kpi.kpiTarget?'<div style="font-size:12px;color:var(--grn3);font-weight:600;margin-bottom:10px">🎯 المستهدف: '+kpi.kpiTarget+'</div>':'')
+            +'<div class="kpi-compare">'
+            +'<div class="kpi-city"><div class="kpi-city-name">🏛 '+S.org+'</div>'
+            +'<div class="kpi-pct kpi-pct-pri">'+lp+'%</div>'
+            +'<div class="kpi-bar-track"><div class="kpi-bar-fill kpi-bar-pri" style="width:'+lp+'%"></div></div>'
+            +'<div class="kpi-activities">'+lacts+'</div></div>'
+            +'<div class="kpi-city"><div class="kpi-city-name">🌍 '+S.practice.org+'</div>'
+            +'<div class="kpi-pct kpi-pct-sec">'+rp+'%</div>'
+            +'<div class="kpi-bar-track"><div class="kpi-bar-fill kpi-bar-sec" style="width:'+rp+'%"></div></div>'
+            +'<div class="kpi-activities">'+racts+'</div></div>'
+            +'</div></div></div>';
+        }).join('')}
+      </div>
+
+      <!-- 8. نقاط القوة -->
+      ${strRows?`<div class="rep-section">
+        <div class="rep-h">💡 ٨. نقاط القوة وكيفية تبنّيها</div>
+        <table class="strengths-table">
+          <thead><tr><th style="width:25%">نقطة القوة</th><th style="width:45%">التطبيق المقترح</th><th style="width:30%">العائد المتوقع</th></tr></thead>
+          <tbody>${strRows}</tbody>
+        </table>
+      </div>`:''}
+
+      <!-- 9. التوصيات التنفيذية -->
+      ${recRows?`<div class="rep-section">
+        <div class="rep-h">🗺️ ٩. التوصيات التنفيذية المختصرة</div>
+        <table class="rec-table">
+          <thead><tr><th style="width:15%">المجال</th><th style="width:35%">الإجراء</th><th style="width:20%">المالك/الشركاء</th><th style="width:15%">الأولوية</th><th style="width:15%">الأفق الزمني</th></tr></thead>
+          <tbody>${recRows}</tbody>
+        </table>
+      </div>`:''}
+
+      <!-- 10. الخلاصة -->
+      <div class="rep-section">
+        <div class="rep-h">✨ ١٠. الخلاصة</div>
+        <div class="rep-text">${d.conclusion||''}</div>
+      </div>
+
+      <!-- 11. المصادر -->
+      ${srcHTML?`<div class="rep-section">
+        <div class="rep-h">📚 ١١. الأدلة والمصادر — اقتباس مختصر وروابط مباشرة</div>
+        <div class="sources-list">${srcHTML}</div>
+      </div>`:''}
+
+    </div><!-- /rep-body -->
+
+    <!-- تذييل -->
+    <div class="rep-footer">
+      <p>🔒 وثيقة مؤسسية · للاستخدام الرسمي فقط</p>
+      <p>${today} · ${S.refNum}</p>
+    </div>
+
+  </div><!-- /report-wrap -->
+  `;
+
+  // ملخص سريع
+  document.getElementById('summaryCard').innerHTML = `
+    <div class="sum-header"><p>📌 الملخص التنفيذي السريع — للمدير المباشر</p></div>
+    <div class="sum-body">
+      <div class="sum-kpis">
+        <div class="sum-kpi"><div class="sum-kpi-val">${d.kpi1_val||'—'}</div><div class="sum-kpi-lbl">${d.kpi1_label||'مؤشر رئيسي'}</div></div>
+        <div class="sum-kpi"><div class="sum-kpi-val">${d.kpi2_val||'—'}</div><div class="sum-kpi-lbl">${d.kpi2_label||'مؤشر 2'}</div></div>
+        <div class="sum-kpi"><div class="sum-kpi-val">${d.kpi3_val||S.practice.match+'%'}</div><div class="sum-kpi-lbl">${d.kpi3_label||'نسبة التطابق'}</div></div>
+      </div>
+      <div class="sum-text">${d.execSummary?.whatFound||''} ${d.execSummary?.whatToDo||''}</div>
+    </div>
+  `;
+}
+
+// ══ KPI PHASE FUNCTIONS ══
+
+let selectedKpis = [];
+
+/* renderKpiSuggestions removed - using renderKpiSuggest */
+
+/* toggleKpi old removed */
+
+/* addManualKpi old removed */
+
+/* removeSelectedKpi old removed */
+
+/* renderSelectedKpis replaced by updateKpiCount */
+
+function proceedToSearch() {
+  S.kpis = getSelectedKpis();
+  goTo(4);
+  runReport();
+}
+
+// ══ end KPI functions ══
+
+function startOver() {
+  S={ph:1,idea:'',sector:'',org:'',practice:null,kpis:[],refNum:''};
+  selectedKpis=[];
+  S.refNum='BM-'+new Date().getFullYear()+'-'+String(Math.floor(Math.random()*9000)+1000);
+  document.getElementById('refBadge').textContent=S.refNum;
+  document.getElementById('ideaText').value='';
+  document.getElementById('sectorSel').selectedIndex=0;
+  document.getElementById('orgInput').value='';
+  document.getElementById('fileChips').innerHTML='';
+  ['ph2-loading','ph3-loading','ph4-loading'].forEach(function(id){var e=document.getElementById(id);if(e)e.style.display='block';});
+  
+  ['ph2-results','ph3-results','ph4-results'].forEach(function(id){var e=document.getElementById(id);if(e)e.style.display='none';});
+  document.getElementById('ph4-loading').style.display='block';
+  document.getElementById('ph4-results').style.display='none';
+  goTo(1);
+}
+
+</script>
+</body>
+</html>
